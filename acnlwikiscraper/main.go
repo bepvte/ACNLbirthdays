@@ -50,7 +50,7 @@ func main() {
 		}
 		if e.DOM.Text() == "" {
 			b, _ := e.DOM.Html()
-			ioutil.WriteFile("out.html", []byte(b), 777)
+			ioutil.WriteFile("out.html", []byte(b), 0777)
 			log.Fatal(name)
 		}
 		characterMap[name].PicQuote = e.DOM.Text()
@@ -86,5 +86,5 @@ func main() {
 	}
 
 
-	ioutil.WriteFile("results.json", b, 777)
+	ioutil.WriteFile("results.json", b, 0777)
 }
