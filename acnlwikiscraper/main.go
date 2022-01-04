@@ -31,7 +31,7 @@ func main() {
 
 	characterMap := make(map[string]*Character)
 	///table.roundy tr tbody tr
-	c.OnHTML("div#mw-content-text > table.roundy:nth-child(4) tr tbody tr", func(e *colly.HTMLElement) {
+	c.OnHTML("div#mw-content-text table.roundy:nth-child(3) tr tbody tr", func(e *colly.HTMLElement) {
 		var char Character
 		if err := e.Unmarshal(&char); err != nil {
 			log.Fatal(err)
@@ -43,18 +43,13 @@ func main() {
 		e.Request.Visit(e.ChildAttr("td:nth-child(1) a", "href"))
 	})
 
-	c.OnHTML("table.roundy td.roundy small i", func(e *colly.HTMLElement) {
-		name := e.DOM.Parents().Find("big big b").Text()
+	c.OnHTML(".portable-infobox", func(e *colly.HTMLElement) {
+		name := e.DOM.Find("h2:nth-child(1)").Text()
 		if _, ok := characterMap[name]; !ok {
 			characterMap[name] = &Character{}
 		}
-		if e.DOM.Text() == "" {
-			b, _ := e.DOM.Html()
-			ioutil.WriteFile("out.html", []byte(b), 0777)
-			log.Fatal(name)
-		}
-		characterMap[name].PicQuote = e.DOM.Text()
-		imageraw, _ := e.DOM.Parent().Parent().Find("a").Attr("href")
+		characterMap[name].PicQuote = e.DOM.Find("figcaption").Text()
+		imageraw, _ := e.DOM.Find("figure a.image").Attr("href")
 		characterMap[name].ImageUrl = strings.Split(imageraw, "/revision")[0]
 	})
 
